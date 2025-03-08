@@ -77,5 +77,22 @@ namespace Demo.PL.Controllers
             }
         
         }
+
+        [HttpGet]
+        public IActionResult Details()
+        {
+            return View();
+        }
+
+        //[HttpPost]
+        //public IActionResult Details(int id)
+        //{
+        //    var department = service.GetDepartmentById(id);
+        //    if (department == null)
+        //    {
+        //        return NotFound();
+        //    }
+        //    return View(department);
+        //}
     }
 }
