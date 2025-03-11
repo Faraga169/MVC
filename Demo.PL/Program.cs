@@ -1,6 +1,9 @@
 using Demo.BLL.Services.Department;
+using Demo.BLL.Services.Employee;
 using Demo.DAL.presistance.Data;
 using Demo.DAL.presistance.Repositories.Departments;
+using Demo.DAL.presistance.Repositories.Employees;
+using Demo.DAL.presistance.Repositories.Generic;
 using Microsoft.EntityFrameworkCore;
 
 namespace Demo.PL
@@ -20,6 +23,9 @@ namespace Demo.PL
             });  // Add DI for AppDbContext
 
             builder.Services.AddScoped<IDepartmentRepository, DepartmentRepository>(); // Add DI for DepartmentRepository
+            builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+            builder.Services.AddScoped<IEmployeeService, EmployeeService>();
+            //builder.Services.AddScoped<IGenericRepository<T>,GenericRepository<T>>();
             builder.Services.AddScoped<IDepartmentService,DepartmentService>();  // Add DI for Department Service
             var app = builder.Build();
 

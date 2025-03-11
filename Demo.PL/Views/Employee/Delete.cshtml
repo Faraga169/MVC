@@ -1,0 +1,72 @@
+﻿@model EmployeeDetailsToReturnDto
+@{
+    ViewData["Title"] = "Delete";
+}
+
+<div class=" row justify-content-center align-content-center mt-3">
+    <h1 class="col-8 my-4 text-center">Delete of Employee</h1>
+    <form asp-controller="Employee" asp-action="Delete" asp-route-id="@Model.Id" class="col-8" method="post">
+        <div asp-validation-summary="All">
+        </div>
+        <div class="form-group mb-2">
+            <label class="form-label" for="Name">Name</label>
+            <input id="Name" name="Name" type="text" value="@Model.Name" class="form-control" readonly />
+        </div>
+
+
+        <div class="form-group mb-2">
+            <label class="form-label" for="Email">Email</label>
+            <input id="Email" name="Email" value="@Model.Email" type="email" class="form-control" readonly />
+        </div>
+
+        <div class="form-group mb-2">
+            <label class="form-label" for="Address">Address</label>
+            <input id="Address" name="Address" value="@Model.Address" type="text" class="form-control" readonly />
+        </div>
+
+
+        <div class="form-group mb-2">
+            <label class="form-label" for="Phone">Phone</label>
+            <input id="Phone" name="Phone" value="@Model.Phone" class="form-control" readonly />
+        </div>
+
+
+        <div class="form-group mb-2">
+            <label class="form-label" for="Age">Age</label>
+            <input id="Age" name="Age" value="@Model.Age" type="number" class="form-control" readonly />
+        </div>
+
+
+        <div class="form-group mb-2">
+            <label class="form-label" for="Salary">Salary</label>
+            <input id="Salary" name="Salary" value="@Model.Salary" class="form-control" />
+        </div>
+
+        <div class="form-group mb-2">
+            <label class="form-label" for="Gender">Gender</label>
+            <input id="Gender" name="Gender" value="@Model.Gender" class="form-control" readonly />
+        </div>
+
+
+
+
+        <div class="form-group mb-2">
+            <label class="form-label" for="EmployeeType">EmployeeType</label>
+            <input id="EmployeeType" value="@Model.EmployeeType" name="EmployeeType" class="form-control" readonly />
+        </div>
+
+
+
+        <div class="form-group mb-2">
+            <label class="form-label" for="IsActive">Is Active</label>
+            <input id="Is Active" value="@Model.IsActive.ToString()" name="IsActive" class="form-control" readonly />
+        </div>
+
+        <div class="mt-4 m-auto">
+           <input type="submit"  value="Delete" class="btn btn-danger" />
+            <a asp-controller="Employee" asp-action="Index" class="btn btn-outline-dark">Back to List</a>
+        </div>
+    </form>
+    </div>
+
+

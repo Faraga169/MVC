@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Demo.DAL.Models
 {
-    public abstract class ModelBase
+    public  class ModelBase
     {
         public int Id { get; set; }
 

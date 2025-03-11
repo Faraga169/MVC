@@ -33,7 +33,7 @@ namespace Demo.BLL.Services.Department
             //    };
             //}
 
-            var departmetns = departmentRepository.GetAllQuery().Select(d => new DepartmenttoReturnDto {
+            var departmetns = departmentRepository.GetAllQuery().Where(x => x.IsDeleted == false).Select(d => new DepartmenttoReturnDto {
                 Id = d.Id,
                 Name = d.Name,
                 //Description = d.Description,
@@ -89,7 +89,7 @@ namespace Demo.BLL.Services.Department
 
         public int UpdateDepartment(DepartmentToUpdateDto department)
         {
-            var departmentupdate = departmentRepository.AddDepartment(
+            var departmentupdate = departmentRepository.UpdateDepartment(
                  new DAL.Models.Departments.Department
                  {
                      Id = department.Id,

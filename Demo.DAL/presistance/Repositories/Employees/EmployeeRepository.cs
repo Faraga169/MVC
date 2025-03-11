@@ -3,20 +3,21 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Demo.DAL.Models.Departments;
+using Demo.DAL.Models.Employees;
 using Demo.DAL.presistance.Data;
 using Demo.DAL.presistance.Repositories.Generic;
 using Microsoft.EntityFrameworkCore;
 
-namespace Demo.DAL.presistance.Repositories.Departments
+namespace Demo.DAL.presistance.Repositories.Employees
 {
-    public class DepartmentRepository :GenericRepository<Department>,IDepartmentRepository
+    public class EmployeeRepository: GenericRepository<DAL.Models.Employees.Employees>, IEmployeeRepository
     {
-
-        public DepartmentRepository(AppDBContext app):base(app)
+        public EmployeeRepository(AppDBContext app):base(app)
         {
             
         }
+
+
 
 
     }
