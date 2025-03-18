@@ -33,6 +33,8 @@ namespace Demo.DAL.presistance.Data.Configurations
 
             builder.Property(d => d.CreatedOn).HasDefaultValueSql("getdate()");
             builder.Property(d => d.LastModifiedOn).HasDefaultValueSql("getdate()");
+
+            builder.HasOne(E => E.Department).WithMany(D => D.Employees).HasForeignKey(E => E.DepartmentId).OnDelete(DeleteBehavior.SetNull);
         }
     }
 }

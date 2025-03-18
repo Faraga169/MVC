@@ -1,6 +1,8 @@
 ﻿using Demo.BLL.DTOS.Employee;
+using Demo.BLL.Services.Department;
 using Demo.BLL.Services.Employee;
 using Demo.DAL.Models.Departments;
+using Demo.DAL.presistance.Data;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Demo.PL.Controllers
@@ -8,22 +10,29 @@ namespace Demo.PL.Controllers
     public class EmployeeController:Controller
     {
         private readonly IEmployeeService service;
+        private readonly IDepartmentService department;
+      
+      
 
-        public EmployeeController(IEmployeeService service)
+        public EmployeeController(IEmployeeService service,IDepartmentService department)
         {
             this.service = service;
+            this.department = department;
         }
 
         [HttpGet]
-        public IActionResult Index()
+        public IActionResult Index(string SearchValue)
         {
-            var employees = service.GetAllEmployees();
+            
+            var employees = service.GetAllEmployees(SearchValue);
             return View(employees);
            
         }
 
         [HttpGet]
         public IActionResult Create() {
+            // send departments from action of Create to view of Employee [Create]
+            ViewData["Departments"] = department.GetAllDepartments();
             return View();
         }
 
@@ -35,30 +44,27 @@ namespace Demo.PL.Controllers
                 return View(employee);
             }
             var Message = "";
-            try
-            {
+            
                 var result = service.CreateEmployee(employee);
                 if (result > 0)
                 {
+                TempData["Message"] = "Employee is Added";
                     return RedirectToAction("Index");
                 }
                 else
                 {
-                    Message = "Department can not be created";
-                    ModelState.AddModelError("", Message);
+                    Message = "Employee is Added";
+                TempData["Message"] = Message;
+                ModelState.AddModelError("", Message);
                     return View(employee);
                 }
             }
 
-            catch (Exception ex)
-            {
+          
 
-            }
 
-            return View(employee);
-
-                //log exception
-            }
+             
+            
 
         [HttpGet]
         public IActionResult Details(int? id) {
@@ -73,9 +79,12 @@ namespace Demo.PL.Controllers
         }
 
         [HttpGet]
-        public IActionResult Edit(int?id) { 
-            if(id is null)
+        public IActionResult Edit(int?id)
+        {
+            ViewData["Department"] = department.GetAllDepartments();
+            if (id is null)
                 return BadRequest();
+            
             var result = service.GetEmployeeById(id.Value);
             if (result is null)
                 return NotFound();
@@ -92,16 +101,20 @@ namespace Demo.PL.Controllers
                 Name=employee.Name,
                 Email=employee.Email,
                 Address=employee.Address,
+                Phone=employee.Phone,
                 Age=employee.Age,
                 Salary=employee.Salary,
                 Gender=employee.Gender,
                 EmployeeType=employee.EmployeeType,
-                IsActive=employee.IsActive
+                IsActive=employee.IsActive,
+                Department=employee.Department,
+                DepartmentId=employee.DepartmentId
             };
             var result = service.UpdateEmployee(EmployeeUpdate);
             if (result > 0)
-                return RedirectToAction("Index");
-            return View(employee);
+                TempData["Message"] = "Employee is Updated";
+            return RedirectToAction("Index");
+        
         }
 
 
@@ -121,7 +134,8 @@ namespace Demo.PL.Controllers
         { 
             var result = service.DeleteEmployee(id);
             if (result > 0)
-                return RedirectToAction("Index");
+                TempData["Message"] = "Employee is Deleted";
+            return RedirectToAction("Index");
             return View(nameof(Index));
         }
     }

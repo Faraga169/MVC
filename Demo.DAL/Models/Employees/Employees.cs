@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Demo.DAL.Models.Common.Enum;
+using Demo.DAL.Models.Departments;
 
 namespace Demo.DAL.Models.Employees
 {
@@ -19,7 +20,7 @@ namespace Demo.DAL.Models.Employees
 
         public  bool IsActive { get; set; }
 
-        public int? PhoneNumber { get; set; }
+        public int PhoneNumber { get; set; }
 
         public DateOnly HiringDate { get; set; }
 
@@ -28,7 +29,16 @@ namespace Demo.DAL.Models.Employees
         public EmployeeType EmployeeType { get; set; }
 
 
+        // Navidation property 1
+        public virtual Department? Department { get; set; }
 
+        // Foreign key
+        public int? DepartmentId
+        {
+            get; set;
+        }
+
+     
 
     }
 }

@@ -1,6 +1,7 @@
 ﻿@model EmployeeDetailsToReturnDto
 @{
     ViewData["Title"] = "Edit";
+    var Department = new SelectList(ViewData["Department"] as IEnumerable<DepartmenttoReturnDto>, nameof(DepartmenttoReturnDto.Id), nameof(DepartmenttoReturnDto.Name));
 }
 
 <div class=" row justify-content-center align-content-center mt-3">
@@ -43,21 +44,53 @@
         </div>
 
         <div class="form-group mb-2">
-            <label class="form-label" for="Gender">Gender</label>
-            <input id="Gender" name="Gender" value="@Model.Gender" class="form-control"  />
+            <label class="form-label">Gender</label>
+            <div>
+                @foreach (Gender genderOption in Enum.GetValues(typeof(Gender)))
+                {
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" id="Gender_@genderOption"
+                               name="Gender" value="@genderOption"
+                        @(Model.Gender == genderOption.ToString() ? "checked" : "") />
+                        <label class="form-check-label" for="Gender_@genderOption">@genderOption</label>
+                    </div>
+                }
+            </div>
+            <span class="text-danger" asp-validation-for="Gender"></span>
         </div>
+
 
         <div class="form-group mb-2">
-            <label class="form-label" for="EmployeeType">EmployeeType</label>
-            <input id="EmployeeType" value="@Model.EmployeeType" name="EmployeeType" class="form-control"  />
+            <label class="form-label">Department</label>
+            <select asp-for="DepartmentId" class="form-control" asp-items="@Department">
+                <option value="">Select Department</option>
+            </select>
+            <span class="text-danger" asp-validation-for="DepartmentId"></span>
+        </div>
+
+
+
+
+        <div class="form-group mb-2">
+            <label class="form-label">Employee Type</label>
+            <select asp-for="EmployeeType" class="form-control" asp-items="Html.GetEnumSelectList<EmployeeType>()">
+                <option value="">Select Employee Type</option>
+            </select>
+            <span class="text-danger" asp-validation-for="EmployeeType"> </span>
         </div>
 
 
 
         <div class="form-group mb-2">
-            <label class="form-label" for="IsActive">Is Active</label>
-            <input id="Is Active" value="@Model.IsActive.ToString()" name="IsActive" class="form-control"  />
+            <input id="IsActive" name="IsActive" type="checkbox" class="form-check-input" value="true"
+            @(Model.IsActive ? "checked" : "") />
+            <input type="hidden" name="IsActive" value="false" />
+            <label class="col-form-label" for="IsActive">Is Active</label>
+            <span class="text-danger" asp-validation-for="IsActive"></span>
         </div>
+
+       
+
 
         <div class="mt-4 m-auto">
            <input asp-controller="Employee"  type="submit" class="btn btn-secondary"  value="Save Update" />

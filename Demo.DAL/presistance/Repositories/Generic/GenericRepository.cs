@@ -78,5 +78,12 @@ namespace Demo.DAL.presistance.Repositories.Generic
 
 
         }
+
+        
+
+        //public IEnumerable<T> GetAllEnumerable()
+        //{
+        //    return appDB.Set<T>();
+        //}
     }
 }

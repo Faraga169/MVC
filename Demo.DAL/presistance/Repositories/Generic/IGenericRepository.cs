@@ -11,6 +11,8 @@ namespace Demo.DAL.presistance.Repositories.Generic
     public interface IGenericRepository<T> where T : ModelBase
     {
         IQueryable<T> GetAllQuery();
+
+        //IEnumerable<T> GetAllEnumerable();
         IEnumerable<T> GetAll(bool AsNoTracing = true);
 
         T? GetById(int id);

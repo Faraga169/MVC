@@ -1,4 +1,4 @@
-html {
+﻿html {
   font-size: 14px;
 }
 
@@ -20,3 +20,51 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+
+.custom-toast {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    min-width: 300px;
+    max-width: 400px;
+    border-radius: 12px;
+    padding: 15px;
+    font-size: 16px;
+    text-align: center;
+    font-weight: bold;
+    box-shadow: 0px 5px 20px rgba(0, 0, 0, 0.3);
+    color: tomato;
+    transition: all 0.3s ease-in-out;
+    opacity: 0.95;
+}
+
+    /* تحسين التدرجات اللونية */
+    .custom-toast.success {
+        background: linear-gradient(135deg, #1e9600, #84d218, #b2ff59);
+    }
+
+    .custom-toast.error {
+        background: linear-gradient(135deg, #ff0000, #cc0000, #990000);
+    }
+
+    .custom-toast.info {
+        background: linear-gradient(135deg, #2196F3, #21CBF3, #00e5ff);
+    }
+
+    .custom-toast.warning {
+        background: linear-gradient(135deg, #ff9800, #ffb74d, #ffcc80);
+        color: black;
+    }
+
+    /* زر الإغلاق */
+    .custom-toast .close {
+        font-size: 22px;
+        opacity: 0.8;
+        color: white;
+        transition: 0.3s;
+    }
+
+        .custom-toast .close:hover {
+            opacity: 1;
+        }

@@ -1,8 +1,10 @@
-﻿using Demo.BLL.DTOS.Department;
+﻿using AutoMapper;
+using Demo.BLL.DTOS.Department;
 using Demo.BLL.Services.Department;
 using Demo.DAL.Models.Departments;
 using Demo.PL.ViewModels.Departments;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.View;
 
 namespace Demo.PL.Controllers
 {
@@ -11,12 +13,14 @@ namespace Demo.PL.Controllers
     //DepartmentController : Composition  [has a Department service]
     public class DepartmentController : Controller
     {
+        private readonly IMapper mapper;
         private readonly IDepartmentService service;
         private readonly ILogger<DepartmentController> logger;
         private readonly IWebHostEnvironment enviroment;
 
-        public DepartmentController(IDepartmentService service,ILogger<DepartmentController>logger,IWebHostEnvironment enviroment)
+        public DepartmentController(IMapper mapper,IDepartmentService service,ILogger<DepartmentController>logger,IWebHostEnvironment enviroment)
         {
+            this.mapper = mapper;
             this.service = service;
             this.logger = logger;
             this.enviroment = enviroment;
@@ -28,6 +32,8 @@ namespace Demo.PL.Controllers
         [HttpGet]
         public IActionResult Index()
         {
+            //ViewData["Message"] = "Hello From view data";
+            ViewBag.Message = "Hello From view bag";
             var departments = service.GetAllDepartments();
             return View(departments);
         }
@@ -35,12 +41,14 @@ namespace Demo.PL.Controllers
         [HttpGet] //Show The Form
         public IActionResult Create() {
 
+
             return View();
 
         }
 
         [HttpPost] //Save Data
-        public IActionResult Create(DepartmentToCreateDto department) {
+        [ValidateAntiForgeryToken]// Action Filter
+        public IActionResult Create(DepartmentViewModel department) {
             if (!ModelState.IsValid)  //server side validation
             {
                 return View(department);
@@ -48,13 +56,31 @@ namespace Demo.PL.Controllers
             var Message = "";
             try
             {
-                    var result=service.CreateDepartment(department);
+                #region Auto Mapper Automatic
+                var departmentToCreated = mapper.Map<DepartmentViewModel, DepartmentToCreateDto>(department);
+                var result = service.CreateDepartment(departmentToCreated);
+                #endregion
+
+                #region Mapping Manually
+
+                //var result=service.CreateDepartment(new DepartmentToCreateDto() { 
+                //Name = department.Name,
+                //Code = department.Code,
+                //CreationDate = department.CreationDate,
+                //Description = department.Description
+
+                //}); 
+                #endregion
+
                 if (result > 0)
                 {
+                    TempData["Message"] = "Department is Created";
                     return RedirectToAction("Index");
                 }
                 else {
                     Message = "Department can not be created";
+                    TempData["Message"] = Message;
+                    
                     ModelState.AddModelError("", Message);
                     return View(department);
                 }
@@ -107,16 +133,24 @@ namespace Demo.PL.Controllers
             {
                 return NotFound();
             }
-            return View(new DepartmentEditViewModel() { 
-            Code = department.Code,
-                CreationDate = department.CreationDate,
-                Description = department.Description,
-                Name = department.Name
-            });
+            #region AutoMapper
+            var DepartmentViewModel = mapper.Map<DepartmentDetailsToReturnDto, DepartmentViewModel>(department);
+            return View(DepartmentViewModel);
+            #endregion
+
+            #region Mapping Manually
+            //return View(new DepartmentViewModel() { 
+            //Code = department.Code,
+            //    CreationDate = department.CreationDate,
+            //    Description = department.Description,
+            //    Name = department.Name
+            //}); 
+            #endregion
         }
 
         [HttpPost]
-        public IActionResult Edit(int id,DepartmentEditViewModel departmentS)
+        [ValidateAntiForgeryToken]
+        public IActionResult Edit(int id,DepartmentViewModel departmentS)
         {
             if (!ModelState.IsValid)
             {
@@ -124,23 +158,33 @@ namespace Demo.PL.Controllers
             }
             var Message = "";
             try {
-                var UpdateDepartment = new DepartmentToUpdateDto()
-                {
-                    Id = id,
-                    Name = departmentS.Name,
-                    Code = departmentS.Code,
-                    CreationDate = departmentS.CreationDate,
-                    Description = departmentS.Description
-                };
+                #region Auto Mapper
+                var DepartmentUpdate = mapper.Map<DepartmentViewModel, DepartmentToUpdateDto>(departmentS);
+                DepartmentUpdate.Id=id;
+                var UpdateDepartment = DepartmentUpdate; 
+                #endregion
+
+                #region Manually Mapping
+                //var UpdateDepartment = new DepartmentToUpdateDto()
+                //{
+                //    Id = id,
+                //    Name = departmentS.Name,
+                //    Code = departmentS.Code,
+                //    CreationDate = departmentS.CreationDate,
+                //    Description = departmentS.Description
+                //}; 
+                #endregion
                 var department = service.UpdateDepartment(UpdateDepartment);
                 if (department > 0)
                 {
+                    TempData["Message"] = "Department is Updated";
                     return RedirectToAction("Index");
                 }
                 else
                 {
                     Message = "Department can not be updated";
-                    ModelState.AddModelError("", Message);
+                    TempData["Message"] = Message;
+                  ModelState.AddModelError("", Message);
                     return View(departmentS);
                 }
                
@@ -166,6 +210,7 @@ namespace Demo.PL.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public IActionResult Delete(int id) {
 
             var result = service.DeleteDepartment(id);
@@ -173,11 +218,14 @@ namespace Demo.PL.Controllers
             try {
                 if (result > 0)
                 {
+                    TempData["Message"] = "Department is Deleted";
                     return RedirectToAction("Index");
+                   
                 }
                 else
                 {
                   Message = "Department can not be deleted";
+                    TempData["Message"] = Message;
                     ModelState.AddModelError("", Message);
                     return View();
                 }

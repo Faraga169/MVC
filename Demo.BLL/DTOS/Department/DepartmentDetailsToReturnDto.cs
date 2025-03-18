@@ -26,5 +26,7 @@ namespace Demo.BLL.DTOS.Department
         public DateTime LastModifiedOn { get; set; }
 
         public bool IsDeleted { get; set; }
+
+      
     }
 }

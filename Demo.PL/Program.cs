@@ -4,6 +4,8 @@ using Demo.DAL.presistance.Data;
 using Demo.DAL.presistance.Repositories.Departments;
 using Demo.DAL.presistance.Repositories.Employees;
 using Demo.DAL.presistance.Repositories.Generic;
+using Demo.PL.Controllers;
+using Demo.PL.Mapping.profiles;
 using Microsoft.EntityFrameworkCore;
 
 namespace Demo.PL
@@ -19,7 +21,7 @@ namespace Demo.PL
 
             builder.Services.AddDbContext<AppDBContext>(options =>
             {
-                options.UseSqlServer(builder.Configuration.GetSection("ConnectionStrings")["DefaultConnection"]);
+                options.UseLazyLoadingProxies().UseSqlServer(builder.Configuration.GetSection("ConnectionStrings")["DefaultConnection"]);
             });  // Add DI for AppDbContext
 
             builder.Services.AddScoped<IDepartmentRepository, DepartmentRepository>(); // Add DI for DepartmentRepository
@@ -27,6 +29,7 @@ namespace Demo.PL
             builder.Services.AddScoped<IEmployeeService, EmployeeService>();
             //builder.Services.AddScoped<IGenericRepository<T>,GenericRepository<T>>();
             builder.Services.AddScoped<IDepartmentService,DepartmentService>();  // Add DI for Department Service
+            builder.Services.AddAutoMapper(M=>M.AddProfile(new MappingProfile()));
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.

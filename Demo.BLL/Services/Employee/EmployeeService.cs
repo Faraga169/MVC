@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Castle.Components.DictionaryAdapter.Xml;
 using Demo.BLL.DTOS.Employee;
 using Demo.DAL.Models.Common.Enum;
 using Demo.DAL.Models.Employees;
@@ -20,10 +21,10 @@ namespace Demo.BLL.Services.Employee
             this.service = service;
         }
 
-        public IEnumerable<EmployeeToReturnDTO> GetAllEmployees()
+        public IEnumerable<EmployeeToReturnDTO> GetAllEmployees(string Searchvalue)
         {
 
-         return service.GetAllQuery().Where(x=>x.IsDeleted==false).Select(E =>new EmployeeToReturnDTO()
+        var query= service.GetAllQuery().Include(E=>E.Department).Where(x=>x.IsDeleted==false && (String.IsNullOrEmpty(Searchvalue) ||x.Name.ToLower().Contains(Searchvalue.ToLower()) )).Select(E =>new EmployeeToReturnDTO()
             {
               Id = E.Id,
               Name = E.Name,
@@ -35,9 +36,18 @@ namespace Demo.BLL.Services.Employee
               Gender=E.Gender.ToString(),
               EmployeeType=E.EmployeeType.ToString(),
               IsActive=E.IsActive,
+              department=E.Department.Name  // use eager loading
          });
+            return query;
 
-           
+            #region Such For IQuerable vs IEnumerable
+            //var employees = query.ToList();
+            // var count = query.Count();
+            // var firstEmployee = query.FirstOrDefault();
+            // return query;
+            #endregion
+
+
         }
 
         public EmployeeDetailsToReturnDto? GetEmployeeById(int id)
@@ -56,6 +66,7 @@ namespace Demo.BLL.Services.Employee
                 Gender = employee.Gender.ToString(),
                 EmployeeType = employee.EmployeeType.ToString(),
                 IsActive = employee.IsActive,
+                Department = employee?.Department?.Name // use lazy loading
             };
 
 
@@ -75,6 +86,7 @@ namespace Demo.BLL.Services.Employee
                 HiringDate = Employee.HiringDate,
                 Gender=Employee.Gender,
                 EmployeeType = Employee.EmployeeType,
+                DepartmentId= Employee.DepartmentId,
             };
            return service.AddDepartment(employee);
         }
@@ -100,16 +112,19 @@ namespace Demo.BLL.Services.Employee
                 IsActive = Employee.IsActive,
                 Salary = Employee.Salary,
                PhoneNumber= Employee.Phone,
-                HiringDate = Employee.HiringDate,
-                Gender = (Gender)Enum.Parse(typeof(Gender),Employee.Gender),
-                EmployeeType = (EmployeeType)Enum.Parse(typeof(EmployeeType), Employee.EmployeeType),
+                Gender = Employee.Gender != null ? (Gender)Enum.Parse(typeof(Gender), Employee.Gender) : default(Gender),
+                EmployeeType = Employee.EmployeeType != null ? (EmployeeType)Enum.Parse(typeof(EmployeeType), Employee.EmployeeType) : default(EmployeeType),
+                DepartmentId=Employee.DepartmentId,
+                
+        
             };
             return service.UpdateDepartment(Employees);
-           
-               
+
+
+
    
 
-            
-        }
+
+    }
     }
 }

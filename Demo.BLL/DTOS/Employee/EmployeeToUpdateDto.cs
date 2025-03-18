@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Demo.DAL.Models.Common.Enum;
 
 namespace Demo.BLL.DTOS.Employee
 {
@@ -19,14 +20,14 @@ namespace Demo.BLL.DTOS.Employee
         [Range(22, 30)]
         public int? Age { get; set; }
 
-        public DateOnly HiringDate { get; set; }
+        //public DateOnly HiringDate { get; set; }
         public string? Address { get; set; }
 
         [DataType(DataType.EmailAddress)]
         [EmailAddress]
         public string? Email { get; set; }
 
-        [DataType(DataType.PhoneNumber)]
+        
         [Phone]
         public int Phone { get; set; }
 
@@ -38,6 +39,13 @@ namespace Demo.BLL.DTOS.Employee
         public string Gender { get; set; }
 
         public string EmployeeType { get; set; }
+
+        [Display(Name = "Department")]
+        public int? DepartmentId { get; set; }
+
+        public string? Department{ get; set; }
     }
 }
+
+
 

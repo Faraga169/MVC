@@ -41,5 +41,8 @@ namespace Demo.BLL.DTOS.Employee
         public EmployeeType EmployeeType { get; set; }
 
         public DateOnly HiringDate { get; set; }
+
+        [Display(Name="Department")]
+        public int?  DepartmentId { get; set; }
     }
 }
