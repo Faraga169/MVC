@@ -4,28 +4,41 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Castle.Components.DictionaryAdapter.Xml;
+using Demo.BLL.Common.Services.AttachmentService;
 using Demo.BLL.DTOS.Employee;
 using Demo.DAL.Models.Common.Enum;
 using Demo.DAL.Models.Employees;
 using Demo.DAL.presistance.Repositories.Employees;
+using Demo.DAL.presistance.UnitofWork;
 using Microsoft.EntityFrameworkCore;
 
 namespace Demo.BLL.Services.Employee
 {
     public class EmployeeService : IEmployeeService
     {
-        private readonly IEmployeeRepository service;
+        private readonly IUnitofwork unitofwork;
+        private readonly IAttachmentService attachment;
 
-        public EmployeeService(IEmployeeRepository service)
+        //private readonly IEmployeeRepository service;
+
+        //public EmployeeService(IEmployeeRepository service)
+        //{
+        //    this.service = service;
+        //}
+
+        public EmployeeService(IUnitofwork unitofwork,IAttachmentService attachment)
         {
-            this.service = service;
+            this.unitofwork = unitofwork;
+            this.attachment = attachment;
         }
+
 
         public IEnumerable<EmployeeToReturnDTO> GetAllEmployees(string Searchvalue)
         {
 
-        var query= service.GetAllQuery().Include(E=>E.Department).Where(x=>x.IsDeleted==false && (String.IsNullOrEmpty(Searchvalue) ||x.Name.ToLower().Contains(Searchvalue.ToLower()) )).Select(E =>new EmployeeToReturnDTO()
+        var query= unitofwork.EmployeeRepository.GetAllQuery().Include(E=>E.Department).Where(x=>x.IsDeleted==false && (String.IsNullOrEmpty(Searchvalue) ||x.Name.ToLower().Contains(Searchvalue.ToLower()) )).Select(E =>new EmployeeToReturnDTO()
             {
+              Image=E.ImageUrl,
               Id = E.Id,
               Name = E.Name,
               Age= E.Age,
@@ -52,10 +65,11 @@ namespace Demo.BLL.Services.Employee
 
         public EmployeeDetailsToReturnDto? GetEmployeeById(int id)
         {
-            var employee= service.GetById(id);
+            var employee= unitofwork.EmployeeRepository.GetById(id);
             if (employee == null) return null;
             return new EmployeeDetailsToReturnDto()
             {
+                Image= employee.ImageUrl,
                 Name = employee.Name,
                 Age = employee.Age,
                 Phone = employee.PhoneNumber,
@@ -74,8 +88,11 @@ namespace Demo.BLL.Services.Employee
 
         public int CreateEmployee(EmployeeToCreateDto Employee)
         {
+
+
             Employees employee=new Employees()
             {
+                
                 Name = Employee.Name,
                 Address = Employee.Address,
                 Age = Employee.Age,
@@ -88,14 +105,16 @@ namespace Demo.BLL.Services.Employee
                 EmployeeType = Employee.EmployeeType,
                 DepartmentId= Employee.DepartmentId,
             };
-           return service.AddDepartment(employee);
+            if(Employee.Image is not null)
+                employee.ImageUrl = attachment.Upload(Employee.Image,"images");
+            unitofwork.EmployeeRepository.AddDepartment(employee);
+             return unitofwork.Complete();  // rows affected
         }
 
         public int DeleteEmployee(int id)
         {
-            var employee = service.GetById(id);
-            if (employee == null) return 0;
-            return service.DeleteDepartment(employee);
+            var employee = unitofwork.EmployeeRepository.GetById(id);
+            return unitofwork.Complete();  //rows affected
         }
 
        
@@ -118,8 +137,8 @@ namespace Demo.BLL.Services.Employee
                 
         
             };
-            return service.UpdateDepartment(Employees);
-
+            unitofwork.EmployeeRepository.UpdateDepartment(Employees);
+           return unitofwork.Complete();
 
 
    

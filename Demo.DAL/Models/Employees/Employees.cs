@@ -38,7 +38,7 @@ namespace Demo.DAL.Models.Employees
             get; set;
         }
 
-     
+        public string? ImageUrl { get; set; }  // Image Name
 
     }
 }

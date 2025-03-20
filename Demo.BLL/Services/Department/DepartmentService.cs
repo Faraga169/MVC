@@ -6,17 +6,25 @@ using System.Threading.Tasks;
 using Demo.BLL.DTOS.Department;
 using Demo.DAL.Models.Departments;
 using Demo.DAL.presistance.Repositories.Departments;
+using Demo.DAL.presistance.UnitofWork;
 using Microsoft.EntityFrameworkCore;
 
 namespace Demo.BLL.Services.Department
 {
     public class DepartmentService : IDepartmentService
     {
-        private readonly IDepartmentRepository departmentRepository;
+        private readonly IUnitofwork unitofwork;
 
-        public DepartmentService(IDepartmentRepository departmentRepository)
+        //private readonly IDepartmentRepository departmentRepository;
+
+        //public DepartmentService(IDepartmentRepository departmentRepository)
+        //{
+        //    this.departmentRepository = departmentRepository;
+        //}
+
+        public DepartmentService(IUnitofwork unitofwork)
         {
-            this.departmentRepository = departmentRepository;
+            this.unitofwork = unitofwork;
         }
         public IEnumerable<DepartmenttoReturnDto> GetAllDepartments()
         {
@@ -33,7 +41,7 @@ namespace Demo.BLL.Services.Department
             //    };
             //}
 
-            var departmetns = departmentRepository.GetAllQuery().Where(x => x.IsDeleted == false).Select(d => new DepartmenttoReturnDto {
+            var departmetns = unitofwork.DepartmentRepository.GetAllQuery().Where(x => x.IsDeleted == false).Select(d => new DepartmenttoReturnDto {
                 Id = d.Id,
                 Name = d.Name,
                 //Description = d.Description,
@@ -47,7 +55,7 @@ namespace Demo.BLL.Services.Department
 
         public DepartmentDetailsToReturnDto? GetDepartmentById(int id)
         {
-            var department = departmentRepository.GetById(id);
+            var department = unitofwork.DepartmentRepository.GetById(id);
             if (department == null) return null;
             return new DepartmentDetailsToReturnDto() { 
             Description = department.Description,
@@ -64,23 +72,25 @@ namespace Demo.BLL.Services.Department
         }
         public int CreateDepartment(DepartmentToCreateDto department)
         {
-            var departmentcreated = departmentRepository.AddDepartment(
-                new DAL.Models.Departments.Department
+            var departmentcreated =
+                new DAL.Models.Departments.Department()
                 {
                     Name = department.Name,
                     Description = department.Description,
                     Code = department.Code,
-                    CreationDate = department.CreationDate, 
-                }
-                );
-            return departmentcreated;
+                    CreationDate = department.CreationDate,
+                };
+                unitofwork.DepartmentRepository.AddDepartment(departmentcreated);
+            return unitofwork.Complete();
 
         }
         public int DeleteDepartment(int id)
         {
-            var department= departmentRepository.GetById(id);
+            var departmentRepo = unitofwork.DepartmentRepository;
+            var department= departmentRepo.GetById(id);
             if (department == null) return 0;
-            return departmentRepository.DeleteDepartment(department);
+            departmentRepo.DeleteDepartment(department);
+             return unitofwork.Complete();
         }
 
         
@@ -89,17 +99,17 @@ namespace Demo.BLL.Services.Department
 
         public int UpdateDepartment(DepartmentToUpdateDto department)
         {
-            var departmentupdate = departmentRepository.UpdateDepartment(
-                 new DAL.Models.Departments.Department
+            var departmentupdate =
+                 new DAL.Models.Departments.Department()
                  {
                      Id = department.Id,
                      Name = department.Name,
                      Description = department.Description,
                      Code = department.Code,
                      CreationDate = department.CreationDate,
-                 }
-                 );
-            return departmentupdate;
+                 };
+            unitofwork.DepartmentRepository.UpdateDepartment(departmentupdate);
+            return unitofwork.Complete();
         }
     }
 }

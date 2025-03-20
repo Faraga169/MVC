@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Demo.DAL.Models.Common.Enum;
+using Microsoft.AspNetCore.Http;
 
 namespace Demo.BLL.DTOS.Employee
 {
@@ -44,5 +45,7 @@ namespace Demo.BLL.DTOS.Employee
 
         [Display(Name="Department")]
         public int?  DepartmentId { get; set; }
+
+        public IFormFile?  Image{ get; set; }
     }
 }

@@ -17,11 +17,11 @@ namespace Demo.DAL.presistance.Repositories.Generic
 
         T? GetById(int id);
 
-        int AddDepartment(T department);
+        void AddDepartment(T department);
 
-        int UpdateDepartment(T  department);
+        void UpdateDepartment(T  department);
 
-        int DeleteDepartment(T department);
+        void DeleteDepartment(T department);
 
     }
 }

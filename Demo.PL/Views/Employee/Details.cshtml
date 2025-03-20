@@ -5,6 +5,12 @@
 
 <div class=" row justify-content-center align-content-center mt-3">
     <h1 class="col-8 my-4 text-center">Details of Employee</h1>
+
+    <div class="row justify-content-center align-items-center">
+       <div class="col-4">
+           <img src="~/files/Images/@(Model.Image is not null ? Model.Image : "NotFound.png")" class="img-fluid rounded-circle w-100" alt="Employee Image"></img>
+       </div>
+    </div>
   <div class="row">
         <div asp-validation-summary="All">
         </div>
@@ -66,8 +72,9 @@
             <label class="form-label" asp-for="Department"></label>
             <input  class="form-control" value="@Model.Department" readonly />
         </div>
-        
 
+
+        
         <div class="mt-4 m-auto">
             <a asp-controller="Employee" asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-secondary">Edit</a>
             <a asp-controller="Employee" asp-action="Index" class="btn btn-outline-dark">Back to List</a>

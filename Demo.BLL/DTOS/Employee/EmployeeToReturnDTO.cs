@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Demo.DAL.Models.Departments;
+using Microsoft.AspNetCore.Http;
 
 namespace Demo.BLL.DTOS.Employee
 {
@@ -21,5 +22,6 @@ namespace Demo.BLL.DTOS.Employee
         public string Gender { get; set; }
         public int? Phone { get; set; }
         public string EmployeeType { get; set; }
+        public string? Image { get; set; }
     }
 }

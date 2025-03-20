@@ -44,22 +44,22 @@ namespace Demo.DAL.presistance.Repositories.Generic
 
             return appDB.Set<T>().Find(id); // search local  in case found ==>return , else send request to database
         }
-        public int AddDepartment(T department)
+        public void AddDepartment(T department)
         {
             appDB.Set<T>().Add(department); // saved locally
-            int rowaffected = appDB.SaveChanges(); // apply remotly
+            //int rowaffected = appDB.SaveChanges(); // apply remotly
 
-            return rowaffected;
+            //return rowaffected;
         }
 
-        public int UpdateDepartment(T department)
+        public void UpdateDepartment(T department)
         {
             appDB.Set<T>().Update(department); // Modified
-            int rowaffected = appDB.SaveChanges(); // unchanged
+            //int rowaffected = appDB.SaveChanges(); // unchanged
 
-            return rowaffected;
+            //return rowaffected;
         }
-        public int DeleteDepartment(T department)
+        public void DeleteDepartment(T department)
         {
             //appDB.Set<T>().Remove(department); // saved locally
             //int rowaffected = appDB.SaveChanges(); // apply remotly
@@ -69,7 +69,7 @@ namespace Demo.DAL.presistance.Repositories.Generic
             //IsDeleted == true ==> deleted (Disapear from user)
             department.IsDeleted = true;
             appDB.Set<T>().Update(department);
-            return appDB.SaveChanges();
+            //return appDB.SaveChanges();
         }
 
         public IQueryable<T> GetAllQuery()
