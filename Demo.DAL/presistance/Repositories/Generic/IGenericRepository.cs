@@ -13,9 +13,9 @@ namespace Demo.DAL.presistance.Repositories.Generic
         IQueryable<T> GetAllQuery();
 
         //IEnumerable<T> GetAllEnumerable();
-        IEnumerable<T> GetAll(bool AsNoTracing = true);
+        Task<IEnumerable<T>> GetAllAsync(bool AsNoTracing = true);
 
-        T? GetById(int id);
+        Task<T?> GetByIdAsync(int id);
 
         void AddDepartment(T department);
 

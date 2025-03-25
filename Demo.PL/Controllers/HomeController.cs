@@ -1,9 +1,11 @@
 using System.Diagnostics;
 using Demo.PL.ViewModels.Common;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Demo.PL.Controllers
 {
+    [Authorize] // Authenticated is Authorized
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;

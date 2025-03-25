@@ -26,13 +26,16 @@ namespace Demo.DAL.presistance.UnitofWork
        
    
 
-        public int Complete()
+        public async Task<int> CompleteAsync()
         {
-            return unitofwork.SaveChanges();
+            return await unitofwork.SaveChangesAsync();
         }
 
-        public void Dispose() { 
-        unitofwork.Dispose();
+        
+
+       public async ValueTask DisposeAsync()
+        {
+           await unitofwork.DisposeAsync();
         }
     }
 }

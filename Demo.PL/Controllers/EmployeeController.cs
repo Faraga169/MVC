@@ -3,10 +3,12 @@ using Demo.BLL.Services.Department;
 using Demo.BLL.Services.Employee;
 using Demo.DAL.Models.Departments;
 using Demo.DAL.presistance.Data;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Demo.PL.Controllers
 {
+    [Authorize] // Authenticated is Authorized
     public class EmployeeController:Controller
     {
         private readonly IEmployeeService service;
@@ -21,31 +23,31 @@ namespace Demo.PL.Controllers
         }
 
         [HttpGet]
-        public IActionResult Index(string SearchValue)
+        public async Task<IActionResult> IndexAsync(string SearchValue)
         {
             
-            var employees = service.GetAllEmployees(SearchValue);
+            var employees = await service.GetAllEmployeesAsync(SearchValue);
             return View(employees);
            
         }
 
         [HttpGet]
-        public IActionResult Create() {
+        public async Task<IActionResult> CreateAsync() {
             // send departments from action of Create to view of Employee [Create]
-            ViewData["Departments"] = department.GetAllDepartments();
+            ViewData["Departments"] = await department.GetAllDepartmentsAsync();
             return View();
         }
 
         [HttpPost]
 
-        public IActionResult Create(EmployeeToCreateDto employee) {
+        public async Task<IActionResult> CreateAsync(EmployeeToCreateDto employee) {
             if (!ModelState.IsValid)  //server side validation
             {
                 return View(employee);
             }
             var Message = "";
             
-                var result = service.CreateEmployee(employee);
+                var result = await service.CreateEmployeeAsync(employee);
                 if (result > 0)
                 {
                 TempData["Message"] = "Employee is Added";
@@ -67,11 +69,11 @@ namespace Demo.PL.Controllers
             
 
         [HttpGet]
-        public IActionResult Details(int? id) {
+        public async Task<IActionResult> DetailsAsync(int? id) {
             if (id is null)
                 return BadRequest();
 
-            var result = service.GetEmployeeById(id.Value);
+            var result = await service.GetEmployeeByIdAsync(id.Value);
             if (result is null)
                 return NotFound();
 
@@ -79,20 +81,20 @@ namespace Demo.PL.Controllers
         }
 
         [HttpGet]
-        public IActionResult Edit(int?id)
+        public async Task<IActionResult> EditAsync(int?id)
         {
-            ViewData["Department"] = department.GetAllDepartments();
+            ViewData["Department"] = await department.GetAllDepartmentsAsync();
             if (id is null)
                 return BadRequest();
             
-            var result = service.GetEmployeeById(id.Value);
+            var result =await service.GetEmployeeByIdAsync(id.Value);
             if (result is null)
                 return NotFound();
             return View(result);
         }
 
         [HttpPost]
-        public IActionResult Edit(int? id,EmployeeDetailsToReturnDto employee) {
+        public async Task<IActionResult> EditAsync(int? id,EmployeeDetailsToReturnDto employee) {
             if (id is null)
                 return BadRequest();
 
@@ -110,7 +112,7 @@ namespace Demo.PL.Controllers
                 Department=employee.Department,
                 DepartmentId=employee.DepartmentId
             };
-            var result = service.UpdateEmployee(EmployeeUpdate);
+            var result = await service.UpdateEmployeeAsync(EmployeeUpdate);
             if (result > 0)
                 TempData["Message"] = "Employee is Updated";
             return RedirectToAction("Index");
@@ -119,20 +121,20 @@ namespace Demo.PL.Controllers
 
 
         [HttpGet]
-        public IActionResult Delete(int? id)
+        public async Task<IActionResult> DeleteAsync(int? id)
         {
             if (id is null)
                 return BadRequest();
-            var result = service.GetEmployeeById(id.Value);
+            var result =await service.GetEmployeeByIdAsync(id.Value);
             if (result is null)
                 return NotFound();
             return View(result);
         }
 
         [HttpPost]
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> DeleteAsync(int id)
         { 
-            var result = service.DeleteEmployee(id);
+            var result =await service.DeleteEmployeeAsync(id);
             if (result > 0)
                 TempData["Message"] = "Employee is Deleted";
             return RedirectToAction("Index");

@@ -1,0 +1,48 @@
+﻿
+@model RegisterViewModel
+
+
+@{
+	ViewData["Title"] = "Register";
+	Layout = "~/Views/Shared/_AuthLayout.cshtml";
+}
+
+
+<h1>Creative SignUp Form</h1>
+<div class="main-agileinfo">
+	<div class="agileits-top">
+		<div>
+			<span class="text-danger" asp-validation-summary="All"></span>
+		</div>
+		<form asp-action="Register"  method="post">
+			<input class="text-light " asp-for="FName" placeholder="Enter First Name">
+			<span class="text-danger" asp-validation-for="FName"></span>
+			<br />
+			<input class="text-light" asp-for="LName" placeholder="Enter Last Name">
+			<span class="text-danger" asp-validation-for="LName"></span>
+			<br />
+			<input class="text-light email" asp-for="Email" placeholder="Enter your Email">
+			<span class="text-danger" asp-validation-for="Email"></span>
+			<br />
+			<input class="text-light" asp-for="Password" placeholder="Enter Your Password" >
+			<span class="text-danger" asp-validation-for="Password"></span>
+			<br />
+			<input class="text-light" asp-for="ConfirmPassword" placeholder="Enter Again Your Password">
+			<span class="text-danger" asp-validation-for="ConfirmPassword"></span>
+			<br />
+
+			<div class="wthree-text">
+				<label class="anim">
+					<input asp-for="IsAgree" class="checkbox">
+					<span>I Agree To The Terms & Conditions</span>
+				</label>
+				<div class="clear"> </div>
+			</div>
+			<input type="submit" value="SIGNUP">
+		</form>
+		<p>Already have an Account? <a asp-action="Login"> Login Now!</a></p>
+	</div>
+</div>
+@section ValidationScripts {
+	<partial name="_ValidationScriptsPartial" />
+}

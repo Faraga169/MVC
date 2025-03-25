@@ -33,10 +33,10 @@ namespace Demo.BLL.Services.Employee
         }
 
 
-        public IEnumerable<EmployeeToReturnDTO> GetAllEmployees(string Searchvalue)
+        public async Task<IEnumerable<EmployeeToReturnDTO>> GetAllEmployeesAsync(string Searchvalue)
         {
 
-        var query= unitofwork.EmployeeRepository.GetAllQuery().Include(E=>E.Department).Where(x=>x.IsDeleted==false && (String.IsNullOrEmpty(Searchvalue) ||x.Name.ToLower().Contains(Searchvalue.ToLower()) )).Select(E =>new EmployeeToReturnDTO()
+        var query= await unitofwork.EmployeeRepository.GetAllQuery().Include(E=>E.Department).Where(x=>x.IsDeleted==false && (String.IsNullOrEmpty(Searchvalue) ||x.Name.ToLower().Contains(Searchvalue.ToLower()) )).Select(E =>new EmployeeToReturnDTO()
             {
               Image=E.ImageUrl,
               Id = E.Id,
@@ -50,8 +50,8 @@ namespace Demo.BLL.Services.Employee
               EmployeeType=E.EmployeeType.ToString(),
               IsActive=E.IsActive,
               department=E.Department.Name  // use eager loading
-         });
-            return query;
+         }).ToListAsync();
+            return  query;
 
             #region Such For IQuerable vs IEnumerable
             //var employees = query.ToList();
@@ -63,9 +63,9 @@ namespace Demo.BLL.Services.Employee
 
         }
 
-        public EmployeeDetailsToReturnDto? GetEmployeeById(int id)
+        public async Task<EmployeeDetailsToReturnDto?> GetEmployeeByIdAsync(int id)
         {
-            var employee= unitofwork.EmployeeRepository.GetById(id);
+            var employee= await unitofwork.EmployeeRepository.GetByIdAsync(id);
             if (employee == null) return null;
             return new EmployeeDetailsToReturnDto()
             {
@@ -86,7 +86,7 @@ namespace Demo.BLL.Services.Employee
 
         }
 
-        public int CreateEmployee(EmployeeToCreateDto Employee)
+        public async Task<int> CreateEmployeeAsync(EmployeeToCreateDto Employee)
         {
 
 
@@ -106,20 +106,20 @@ namespace Demo.BLL.Services.Employee
                 DepartmentId= Employee.DepartmentId,
             };
             if(Employee.Image is not null)
-                employee.ImageUrl = attachment.Upload(Employee.Image,"images");
+                employee.ImageUrl = await attachment.UploadAsync(Employee.Image,"images");
             unitofwork.EmployeeRepository.AddDepartment(employee);
-             return unitofwork.Complete();  // rows affected
+             return await unitofwork.CompleteAsync();  // rows affected
         }
 
-        public int DeleteEmployee(int id)
+        public async  Task<int> DeleteEmployeeAsync(int id)
         {
-            var employee = unitofwork.EmployeeRepository.GetById(id);
-            return unitofwork.Complete();  //rows affected
+            var employee = await unitofwork.EmployeeRepository.GetByIdAsync(id);
+            return await unitofwork.CompleteAsync();  //rows affected
         }
 
        
 
-        public int UpdateEmployee(EmployeeToUpdateDto Employee)
+        public async Task<int> UpdateEmployeeAsync(EmployeeToUpdateDto Employee)
         {
             var Employees = new Employees()
             {
@@ -138,7 +138,7 @@ namespace Demo.BLL.Services.Employee
         
             };
             unitofwork.EmployeeRepository.UpdateDepartment(Employees);
-           return unitofwork.Complete();
+           return await unitofwork.CompleteAsync();
 
 
    

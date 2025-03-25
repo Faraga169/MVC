@@ -7,12 +7,12 @@ using Demo.DAL.presistance.Repositories.Departments;
 
 namespace Demo.DAL.presistance.UnitofWork
 {
-    public interface IUnitofwork:IDisposable
+    public interface IUnitofwork:IAsyncDisposable
     {
         public  IEmployeeRepository EmployeeRepository { get;  }
 
         public IDepartmentRepository DepartmentRepository { get; }
 
-        int Complete();
+        Task<int> CompleteAsync();
     }
 }

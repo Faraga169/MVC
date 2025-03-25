@@ -23,12 +23,12 @@ namespace Demo.DAL.presistance.Repositories.Generic
             this.appDB = appDB;
         }
 
-        public IEnumerable<T> GetAll(bool AsNoTracing = true)
+        public async Task<IEnumerable<T>> GetAllAsync(bool AsNoTracing = true)
         {
             // IsDeleted== false ==> not deleted (Appear to user)
             if (AsNoTracing)
             {
-                return appDB.Set<T>().Where(x=>x.IsDeleted==false).AsNoTracking().ToList();
+                return await  appDB.Set<T>().Where(x=>x.IsDeleted==false).AsNoTracking().ToListAsync();
             }
 
             
@@ -38,11 +38,11 @@ namespace Demo.DAL.presistance.Repositories.Generic
 
         }
 
-        public T? GetById(int id)
+        public async Task<T?> GetByIdAsync(int id)
         {
             // return appDB.Department.Local.FirstOrDefault(d=>d.Id==id);
 
-            return appDB.Set<T>().Find(id); // search local  in case found ==>return , else send request to database
+            return await appDB.Set<T>().FindAsync(id); // search local  in case found ==>return , else send request to database
         }
         public void AddDepartment(T department)
         {

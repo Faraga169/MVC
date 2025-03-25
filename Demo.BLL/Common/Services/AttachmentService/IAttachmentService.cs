@@ -11,7 +11,7 @@ namespace Demo.BLL.Common.Services.AttachmentService
     {
         // Upload , Delete
 
-        public string? Upload(IFormFile file, string folderName);
+        public Task<string?> UploadAsync(IFormFile file, string folderName);
 
         public bool Delete(string filepath);
 
