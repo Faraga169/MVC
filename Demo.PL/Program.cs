@@ -1,4 +1,5 @@
 using Demo.BLL.Common.Services.AttachmentService;
+using Demo.BLL.Common.Services.EmailServices;
 using Demo.BLL.Services.Department;
 using Demo.BLL.Services.Employee;
 using Demo.DAL.Models.Identity;
@@ -40,7 +41,7 @@ namespace Demo.PL
             //builder.Services.AddScoped<UserManager<ApplicationUser>>();
             //builder.Services.AddScoped<RoleManager<ApplicationUser>>();
             //builder.Services.AddScoped<SignInManager<ApplicationUser>>();
-
+            builder.Services.AddScoped<IEmailSettings, EmailSetting>();
             // signature for Methods
             // Repository ====> stores
             builder.Services.AddIdentity<ApplicationUser, IdentityRole>((options) => {
@@ -81,7 +82,7 @@ namespace Demo.PL
 
             app.MapControllerRoute(
                 name: "default",
-                pattern: "{controller=Account}/{action=Register}/{id:int?}");
+                pattern: "{controller=Account}/{action=Register}/{id?}");
 
             app.Run();
         }

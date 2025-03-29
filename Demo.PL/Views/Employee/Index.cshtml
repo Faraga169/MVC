@@ -88,7 +88,7 @@
                         <td>@Html.DisplayFor(E => item.EmployeeType)</td>
                         <td>@Html.DisplayFor(E => item.Gender)</td>
                         <td>@Html.DisplayFor(E => item.IsActive)</td>
-                           <partial name="_ButtonPartial" model="@item.Id"/>
+                           <partial name="_ButtonPartial" model="@item.Id.ToString()"/>
                         </tr>
                     }
                 </tbody>

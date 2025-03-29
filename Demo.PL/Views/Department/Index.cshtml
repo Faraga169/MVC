@@ -4,7 +4,7 @@
 
 
 @{
-	ViewData["Title"] = "Index";
+	ViewData["Title"] = "IndexAsync";
 	string? viewDataMsg =(string?) ViewData["Message"]; // Enforce type Safety [Compilation Time]
 	string viewBagMsg = ViewBag.Message;  // Can not enforce type safety [CLR]
 }
@@ -71,7 +71,7 @@
 					<td>@item.Name</td>
 					<td>@item.CreationDate</td>
 
-					<partial name="_ButtonPartial" model="@item.Id" />
+					<partial name="_ButtonPartial" model="@item.Id.ToString()" />
 					
 					@* @{ *@
 

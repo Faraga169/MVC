@@ -7,10 +7,9 @@
 <h1>Login</h1>
 <div class="main-agileinfo">
 	<div class="agileits-top">
+		<div asp-validation-summary="All" class="mb-2 text-danger"></div>
+
 <form asp-action="Login" method="post">
-			<div>
-				<span class="text-danger" asp-validation-summary="All"></span>
-			</div>
 	<input class="text-light email" asp-for="Email" placeholder="Enter your Email">
 	<span class="text-danger" asp-validation-for="Email"></span>
 	<br />
@@ -28,6 +27,7 @@
 
 </form>
 <p>Do not have an Account? <a asp-action="Register"> Register Now!</a></p>
+<p>Forget Your Password? <a asp-action="ForgetPassword"> Reset Your password</a></p>
 	</div>
 </div>
 @section ValidationScripts {

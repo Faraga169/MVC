@@ -46,7 +46,7 @@ namespace Demo.BLL.DTOS.Employee
 
         public string? Department{ get; set; }
 
-        public IFormFile?  Image { get; set; }
+        public string? Image { get; set; }
     }
 }
 

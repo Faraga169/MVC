@@ -1,0 +1,38 @@
+﻿@model UserViewModel
+@{
+    ViewData["Title"] = "Delete";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class=" row justify-content-center align-content-center mt-3">
+    <h1 class="col-8 my-4 text-center">Delete User</h1>
+    <form asp-controller="User" asp-action="ConfirmDelete" asp-route-id="@Model.Id" class="col-8" method="post">
+        <div asp-validation-summary="All">
+        </div>
+        <div class="form-group mb-2">
+            <label class="form-label" for="Id">Id</label>
+            <input id="Id" name="Id" type="text" value="@Model.Id" class="form-control" readonly />
+        </div>
+
+        <div class="form-group mb-2">
+            <label class="form-label" for="FirstName">FirstName</label>
+            <input id="FirstName" name="FirstName" value="@Model.FirstName" type="text" class="form-control" readonly />
+        </div>
+
+        <div class="form-group mb-2">
+            <label class="form-label" for="LastName">LastName</label>
+            <input id="LastName" name="LastName" value="@Model.LastName" type="text" class="form-control" readonly />
+        </div>
+
+        <div class="form-group mb-2">
+            <label class="form-label" for="Email">Email</label>
+            <input id="Email" name="Email" value="@Model.Email" type="email" class="form-control" readonly />
+        </div>
+        <div class="mt-4 m-auto">
+           <input type="submit"  value="Delete" class="btn btn-danger" />
+            <a asp-controller="User" asp-action="Index" class="btn btn-outline-dark">Back to List</a>
+        </div>
+    </form>
+    </div>
+
+

@@ -1,4 +1,6 @@
-﻿using Demo.DAL.Models.Identity;
+﻿using System.Security.Policy;
+using Demo.BLL.Common.Services.EmailServices;
+using Demo.DAL.Models.Identity;
 using Demo.PL.ViewModels.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -10,11 +12,13 @@ namespace Demo.PL.Controllers
     {
         private readonly UserManager<ApplicationUser> userManager;
         private readonly SignInManager<ApplicationUser> signInManager;
+        private readonly IEmailSettings emailSettings;
 
-        public AccountController(UserManager<ApplicationUser> userManager,SignInManager<ApplicationUser> signInManager)
+        public AccountController(UserManager<ApplicationUser> userManager,SignInManager<ApplicationUser> signInManager,IEmailSettings emailSettings)
         {
             this.userManager = userManager;
             this.signInManager = signInManager;
+            this.emailSettings = emailSettings;
         }
 
         // Register , Login , Sign Out
@@ -26,6 +30,7 @@ namespace Demo.PL.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]// Action Filter
         public async Task<IActionResult> Register(RegisterViewModel registerViewModel)
         {
             if (ModelState.IsValid)
@@ -35,13 +40,13 @@ namespace Demo.PL.Controllers
                 {
                     UserName = registerViewModel.Email.Split('@')[0],
                     Email = registerViewModel.Email,
-                    PasswordHash = registerViewModel.Password,
                     FName=registerViewModel.FName,
                     LName=registerViewModel.LName,
                     IsAgree=registerViewModel.IsAgree,
                 };
                 //Interfaces and Classes [Signature for methods and methods itself in classes]
-              var result=  await userManager.CreateAsync(User,registerViewModel.Password);
+                var result = await userManager.CreateAsync(User, registerViewModel.Password);
+                
 
                 if (result.Succeeded)
                     return RedirectToAction("Login");
@@ -55,6 +60,7 @@ namespace Demo.PL.Controllers
 
                 
             }
+
             return View(registerViewModel);   // Model State is not valid or result not succeded
 
         }
@@ -65,7 +71,7 @@ namespace Demo.PL.Controllers
         }
 
         [HttpPost]
-
+        [ValidateAntiForgeryToken]// Action Filter
         public async Task<IActionResult> Login(LoginViewModel loginViewModel)
         {
             if (ModelState.IsValid) {
@@ -106,5 +112,76 @@ namespace Demo.PL.Controllers
             return RedirectToAction("Login");
         }
 
+
+        [HttpGet]
+        public IActionResult ForgetPassword() {
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]// Action Filter
+        public async Task<IActionResult> SendResetPasswordURL(ForgetPasswordModelView forgetPassword) {
+            if (ModelState.IsValid) {
+                var user = await userManager.FindByEmailAsync(forgetPassword.Email);
+                if (user is not null)
+                {
+                    var token= await userManager.GeneratePasswordResetTokenAsync(user);
+                    // Account/ResetPassword?email= mariam.gmail.com
+                    var url = Url.Action("ResetPassword","Account",new {Email=forgetPassword.Email,token=token },Request.Scheme);
+                    // TO , Subject , Body , Email =====> {To , Subject , Body}
+                    var Email = new Email() {
+                        To = forgetPassword.Email,
+                        Subject = "Reset Your Password",
+                        Body = url//Url;
+                    };
+                    // send email
+                    emailSettings.SendEmail(Email);
+                    return RedirectToAction("CheckYourInbox");
+
+                }
+                else {
+                    ModelState.AddModelError(string.Empty, "This Email not Register once");
+                }
+            }
+            return View(forgetPassword);
+        }
+
+
+        [HttpGet]
+        public IActionResult CheckYourInbox() {
+            return View();
+        }
+
+
+
+        [HttpGet]
+        public IActionResult ResetPassword(string email,string token) {
+            // pass email , token
+            TempData["Email"] = email;
+            TempData["token"] = token;            
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]// Action Filter
+        public async Task<IActionResult> ResetPassword(ResetPasswordModelView resetPassword) {
+            if (ModelState.IsValid) {
+                
+                var email = TempData["Email"] as string;
+                var token = TempData["token"] as string;
+                var user=await userManager.FindByEmailAsync(email);
+                if (user is not null) { 
+                var result= await userManager.ResetPasswordAsync(user, token,resetPassword.Password);
+
+                    if (result.Succeeded) {
+                        return RedirectToAction("Login");
+                    }
+                }
+
+                ModelState.AddModelError(string.Empty, "Email is Invalid");
+            }
+            ModelState.AddModelError(string.Empty, "Invalid Operations Please Try Again");
+            return View(resetPassword);
+        }
     }
 }

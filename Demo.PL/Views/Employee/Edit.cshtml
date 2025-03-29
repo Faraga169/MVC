@@ -89,8 +89,8 @@
             <span class="text-danger" asp-validation-for="IsActive"></span>
         </div>
 
-       
 
+        
 
         <div class="mt-4 m-auto">
            <input asp-controller="Employee"  type="submit" class="btn btn-secondary"  value="Save Update" />
@@ -99,4 +99,6 @@
 
     </form>
 </div>
-
+@section ValidationScripts {
+    <partial name="_ValidationScriptsPartial" />
+}
